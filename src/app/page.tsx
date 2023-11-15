@@ -1,113 +1,180 @@
-import Image from 'next/image'
+"use client";
 
-export default function Home() {
+import clsx from "clsx";
+import { useEffect, useState } from "react";
+
+export default function HomePage() {
+  const [animActive, setAnimActive] = useState(true);
+
+  useEffect(() => {
+    if (animActive) {
+      setTimeout(() => {
+        setAnimActive(false);
+      }, 10000);
+    }
+  }, [animActive]);
+
+  const handleTitleMouseEnter = () => {
+    if (animActive === false) {
+      setAnimActive(true);
+    }
+  };
+
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
+    <div className="flex items-center h-full">
+      <div className="max-w-full lg:max-w-4xl mx-auto p-3.5 sm:p-8 text-center">
+        <h1
+          className={clsx(
+            "inline-block text-4xl font-extrabold mb-4 transition-colors animated-title",
+            {
+              "active text-zinc-200/50": animActive,
+              "text-[#404040]": !animActive,
+            }
+          )}
+          onMouseEnter={() => handleTitleMouseEnter()}
+        >
+          <span>D</span>
+          <span>e</span>
+          <span>c</span>
+          <span>i</span>
+          <span>d</span>
+          <span>e</span>
+          <span>r</span>
+          <span>&nbsp;</span>
+          <span>A</span>
+          <span>p</span>
+          <span>p</span>
+          <span>?</span>
+        </h1>
+
+        <p className="text-gray-800 mb-6 sm:max-w-[385px] max-w-full mx-auto">
+          that specializes in the art of random selection
         </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="bg-yellow-200 p-4 rounded-md text-center">
+            <h3 className="text-xl font-semibold text-yellow-600 mb-2">
+              Movie Night Dilemmas?
+            </h3>
+            <p className="text-gray-700">
+              Import your IMDb watchlist and let the app do the heavy lifting.
+              Movie night is saved! 🍿✨
+            </p>
+          </div>
+
+          <div className="bg-purple-200 p-4 rounded-md text-center flex items-center justify-center">
+            <h3 className="text-xl font-semibold text-purple-600 ">
+              I will <i>decide</i> what to add next..
+            </h3>
+          </div>
         </div>
+        <style jsx>
+          {`
+            @keyframes rainbowAnimation {
+              0% {
+                color: #923a3a;
+              }
+              6.25% {
+                color: #d44f4f;
+              }
+              12.5% {
+                color: #ff6347;
+              }
+              18.75% {
+                color: #ffa07a;
+                transform: skew(-5deg);
+              }
+              25% {
+                color: #ffd700;
+              }
+              31.25% {
+                color: #d2d200;
+                transform: skew(5deg);
+              }
+              37.5% {
+                color: #7fff00;
+              }
+              43.75% {
+                color: #32cd32;
+                transform: skew(-5deg);
+              }
+              50% {
+                color: #008000;
+              }
+              56.25% {
+                color: #4169e1;
+                transform: skew(5deg);
+              }
+              62.5% {
+                color: #483d8b;
+              }
+              68.75% {
+                color: #800080;
+              }
+              75% {
+                color: #ff69b4;
+              }
+              81.25% {
+                color: #db7093;
+              }
+              87.5% {
+                color: #00ced1;
+              }
+              93.75% {
+                color: #20b2aa;
+              }
+              97.5% {
+                color: #ff0066;
+              }
+              100% {
+                color: #404040;
+              }
+            }
+
+            .animated-title.active span {
+              display: inline-block;
+              animation: rainbowAnimation 6s forwards steps(1);
+            }
+
+            .animated-title span:nth-child(1) {
+              animation-delay: 0.3s;
+            }
+            .animated-title span:nth-child(2) {
+              animation-delay: 0.6s;
+            }
+            .animated-title span:nth-child(3) {
+              animation-delay: 0.9s;
+            }
+            .animated-title span:nth-child(4) {
+              animation-delay: 1.2s;
+            }
+            .animated-title span:nth-child(5) {
+              animation-delay: 1.5s;
+            }
+            .animated-title span:nth-child(6) {
+              animation-delay: 1.8s;
+            }
+            .animated-title span:nth-child(7) {
+              animation-delay: 2.1s;
+            }
+            .animated-title span:nth-child(8) {
+              animation-delay: 2.4s;
+            }
+            .animated-title span:nth-child(9) {
+              animation-delay: 2.7s;
+            }
+            .animated-title span:nth-child(10) {
+              animation-delay: 3s;
+            }
+            .animated-title span:nth-child(11) {
+              animation-delay: 3.3s;
+            }
+            .animated-title span:nth-child(12) {
+              animation-delay: 3.6s;
+            }
+          `}
+        </style>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </div>
+  );
 }
