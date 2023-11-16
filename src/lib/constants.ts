@@ -1,8 +1,9 @@
 export const fileConfigs = {
   imdb: {
-    // 1mb
-    max_file_size: 100000,
+    // 1MB
+    max_file_size: 1000000,
     allowed_type: ["text/csv"],
+    allowed_ext: ".csv",
   },
 };
 

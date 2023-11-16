@@ -34,12 +34,12 @@ const imdbFileFormSchema = z.object({
     .any()
     .refine((file) => file instanceof File, "Please upload file")
     .refine(
-      (file) => file?.size <= fileConfigs.imdb.max_file_size,
-      `Max file size is ${fileConfigs.imdb.max_file_size / 100000}MB.`
-    )
-    .refine(
       (file) => fileConfigs.imdb.allowed_type.includes(file?.type),
       "Only .csv formats are supported."
+    )
+    .refine(
+      (file) => file?.size <= fileConfigs.imdb.max_file_size,
+      `Max file size is ${fileConfigs.imdb.max_file_size / 1000000}MB.`
     ),
 });
 
@@ -119,6 +119,7 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
                       onBlur={field.onBlur}
                       disabled={form.formState.isSubmitSuccessful}
                       placeholder="Select file"
+                      accept={fileConfigs.imdb.allowed_ext}
                       type="file"
                       onChange={(event) => {
                         field.onChange(event?.target?.files?.[0]);
