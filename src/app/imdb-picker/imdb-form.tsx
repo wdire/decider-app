@@ -15,7 +15,7 @@ import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
 import { fileConfigs } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import papaparse from "papaparse";
@@ -56,6 +56,7 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
     mode: "onChange",
   });
   const { setImdbList } = useImdbContext();
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   const onSubmit = async (data: ImbdFileFormValues) => {
     papaparse.parse(data.imdb_csv, {
@@ -72,9 +73,14 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
           setImdbList(resultData);
           localStorage.setItem("imdb_list", JSON.stringify(resultData));
           toast({
-            title: "Saved your imdb list",
+            title: "Saved your IMDb list",
             type: "foreground",
           });
+
+          setTimeout(() => {
+            setDialogOpen(false);
+            form.reset();
+          }, 1500);
         }
       },
       error: () => {
@@ -87,7 +93,7 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
   };
 
   return (
-    <Dialog modal={false}>
+    <Dialog modal={false} open={dialogOpen} onOpenChange={setDialogOpen}>
       <DialogTrigger asChild>
         <Button variant="outline">{buttonLabel}</Button>
       </DialogTrigger>
