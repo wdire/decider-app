@@ -5,3 +5,10 @@ export const fileConfigs = {
     allowed_type: ["text/csv"],
   },
 };
+
+export const imdbTypeNames = {
+  movie: "Movie",
+  tvMiniSeries: "TV Mini",
+  tvSeries: "TV",
+  video: "Video",
+};

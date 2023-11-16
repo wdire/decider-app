@@ -24,9 +24,9 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { DialogTitle } from "@radix-ui/react-dialog";
 import { useImdbContext } from "@/context/imdb.context";
 
 const imdbFileFormSchema = z.object({
@@ -112,7 +112,7 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
                       ref={field.ref}
                       onBlur={field.onBlur}
                       disabled={form.formState.isSubmitSuccessful}
-                      placeholder="shadcn"
+                      placeholder="Select file"
                       type="file"
                       onChange={(event) => {
                         field.onChange(event?.target?.files?.[0]);

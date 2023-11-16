@@ -1,8 +1,7 @@
-import { ImdbProvider } from "@/context/imdb.context";
 import React from "react";
 
 const Layout = ({ children }: { children: React.JSX.Element }) => {
-  return <ImdbProvider>{children}</ImdbProvider>;
+  return children;
 };
 
 export default Layout;

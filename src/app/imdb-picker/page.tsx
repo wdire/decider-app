@@ -11,6 +11,7 @@ import { useCallback, useMemo, useState } from "react";
 import getMetadata from "../services/getMetadata";
 import Loading from "@/components/loading";
 import Image from "next/image";
+import ImdbListDialog from "./imdb-list-dialog";
 
 export default function ImdbPickerPage() {
   const { imdbList } = useImdbContext();
@@ -61,8 +62,6 @@ export default function ImdbPickerPage() {
       });
     }
   }, [imdbList, mutateGetMetadata]);
-
-  console.log("selectionData", selectionData);
 
   const renderButtonAndResult = useMemo(() => {
     if (isMetadataPending) {
@@ -149,11 +148,14 @@ export default function ImdbPickerPage() {
               You have uploaded <b>{imdbList?.length - 2}</b> items from IMDb
             </div>
           )}
-          <FileUploadForm
-            buttonLabel={
-              imdbList?.length ? "Replace IMDb List" : "Upload IMDb List"
-            }
-          />
+          <div className="flex gap-3">
+            <FileUploadForm
+              buttonLabel={
+                imdbList?.length ? "Replace IMDb List" : "Upload IMDb List"
+              }
+            />
+            <ImdbListDialog />
+          </div>
         </div>
         {renderButtonAndResult}
       </div>
