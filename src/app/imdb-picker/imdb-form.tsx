@@ -61,9 +61,9 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
     papaparse.parse(data.imdb_csv, {
       complete: (results) => {
         if (results?.data) {
-          let resultData: string[][] = Object.values({
+          const resultData: string[][] = Object.values({
             ...results.data,
-          }) as any;
+          }) as string[][];
 
           if (resultData?.[resultData.length - 1]?.length === 1) {
             delete resultData?.[resultData.length - 1];

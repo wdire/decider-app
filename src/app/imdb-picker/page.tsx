@@ -7,20 +7,14 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/components/ui/use-toast";
 import { useImdbContext } from "@/context/imdb.context";
 import { useMutation } from "@tanstack/react-query";
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo } from "react";
 import getMetadata from "../services/getMetadata";
 import Loading from "@/components/loading";
 import Image from "next/image";
 import ImdbListDialog from "./imdb-list-dialog";
 
 export default function ImdbPickerPage() {
-  const { imdbList } = useImdbContext();
-
-  const [selectionData, setSelectionData] = useState({
-    title: "",
-    poster: "",
-    url: "",
-  });
+  const { imdbList, selectionData, setSelectionData } = useImdbContext();
 
   const { mutateAsync: mutateGetMetadata, isPending: isMetadataPending } =
     useMutation({
@@ -61,7 +55,7 @@ export default function ImdbPickerPage() {
         url: randomSelection[urlIndex],
       });
     }
-  }, [imdbList, mutateGetMetadata]);
+  }, [imdbList, mutateGetMetadata, setSelectionData]);
 
   const renderButtonAndResult = useMemo(() => {
     if (isMetadataPending) {
@@ -151,10 +145,13 @@ export default function ImdbPickerPage() {
           <div className="flex gap-3">
             <FileUploadForm
               buttonLabel={
-                imdbList?.length ? "Replace IMDb List" : "Upload IMDb List"
+                imdbList && imdbList?.length > 0
+                  ? "Replace IMDb List"
+                  : "Upload IMDb List"
               }
             />
-            <ImdbListDialog />
+
+            {imdbList && imdbList?.length > 0 && <ImdbListDialog />}
           </div>
         </div>
         {renderButtonAndResult}

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 
 import fetch from "node-fetch";
-const cheerio = require("cheerio");
+import cheerio from "cheerio";
 
 async function getWebsiteMetadata(url: string) {
   try {
