@@ -133,7 +133,7 @@ export default function ImdbPickerPage() {
 
   return (
     <div className="flex items-center h-full">
-      <div className="h-[350px] flex flex-wrap p-7 gap-10 sm:mb-0">
+      <div className="md:h-[350px] flex flex-wrap pt-2 pb-14 px-7 sm:p-7 gap-10 sm:mb-0">
         <div>
           <div className="text-2xl font-semibold mb-1.5">IMDb Picker</div>
           <p className="text-gray-800 mb-6 sm:max-w-[385px] max-w-full mx-auto">
