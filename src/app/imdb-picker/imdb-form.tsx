@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/use-toast";
-import { fileConfigs } from "@/lib/constants";
+import { fileConfigs, imdbListGroups, imdbListUrls } from "@/lib/constants";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -28,25 +28,46 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { useImdbContext } from "@/context/imdb.context";
+import axios from "axios";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const imdbFileFormSchema = z.object({
-  imdb_csv: z
-    .any()
-    .refine((file) => file instanceof File, "Please upload file")
-    .refine(
-      (file) => fileConfigs.imdb.allowed_type.includes(file?.type),
-      "Only .csv formats are supported."
-    )
-    .refine(
-      (file) => file?.size <= fileConfigs.imdb.max_file_size,
-      `Max file size is ${fileConfigs.imdb.max_file_size / 1000000}MB.`
-    ),
-});
+const imdbFileFormSchema = z
+  .object({
+    imdb_csv: z.union([
+      z
+        .any()
+        .refine((file) => file instanceof File, "Please upload file")
+        .refine(
+          (file) => fileConfigs.imdb.allowed_type.includes(file?.type),
+          "Only .csv formats are supported."
+        )
+        .refine(
+          (file) => file?.size <= fileConfigs.imdb.max_file_size,
+          `Max file size is ${fileConfigs.imdb.max_file_size / 1000000}MB.`
+        ),
+      z.literal(""),
+    ]),
+
+    premade_list_id: z.string(),
+  })
+  .refine((data) => data.imdb_csv || (data.premade_list_id && !data.imdb_csv), {
+    path: ["premade_list_id"],
+    message: "You need to select one of these if you don't have a list",
+  });
 
 type ImbdFileFormValues = z.infer<typeof imdbFileFormSchema>;
 
 const defaultValues: Partial<ImbdFileFormValues> = {
   imdb_csv: "",
+  premade_list_id: "",
 };
 
 const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
@@ -59,7 +80,36 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   const onSubmit = async (data: ImbdFileFormValues) => {
-    papaparse.parse(data.imdb_csv, {
+    if (data.imdb_csv) {
+      parseCsvListFile(data.imdb_csv);
+    } else if (data.premade_list_id) {
+      const list_id = data.premade_list_id as keyof typeof imdbListUrls;
+      if (list_id in imdbListUrls) {
+        const listFileResponse = await axios.get(imdbListUrls[list_id]);
+
+        parseCsvListFile(listFileResponse.data);
+      } else {
+        form.setError("root", {
+          message: "_error_",
+        });
+        toast({
+          title: "Couldn't get list",
+          className: "text-red-500",
+        });
+      }
+    } else {
+      form.setError("root", {
+        message: "_error_",
+      });
+      toast({
+        title: "Error occured while submitting",
+        className: "text-red-500",
+      });
+    }
+  };
+
+  const parseCsvListFile = (file: File | string) => {
+    return papaparse.parse(file, {
       complete: (results) => {
         if (results?.data) {
           const resultData: string[][] = Object.values({
@@ -75,6 +125,7 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
           toast({
             title: "Saved your IMDb list",
             type: "foreground",
+            className: "text-green-500",
           });
 
           setTimeout(() => {
@@ -87,13 +138,21 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
         toast({
           title: "Error occured while parsing csv file",
           type: "background",
+          className: "text-red-500",
         });
       },
     });
   };
 
+  const onDialogOpenChange = (value: boolean) => {
+    if (value === false) {
+      form.reset();
+    }
+    setDialogOpen(value);
+  };
+
   return (
-    <Dialog modal={false} open={dialogOpen} onOpenChange={setDialogOpen}>
+    <Dialog modal={false} open={dialogOpen} onOpenChange={onDialogOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline">{buttonLabel}</Button>
       </DialogTrigger>
@@ -108,7 +167,6 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
             <FormField
               control={form.control}
               name="imdb_csv"
-              rules={{}}
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>IMDb list export file (*.csv)</FormLabel>
@@ -127,6 +185,7 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
                     />
                   </FormControl>
                   <FormDescription>
+                    <div className="font-semibold">Find your list:</div>
                     <ol className="list-disc pl-5">
                       <li>
                         On IMDb, go to “Your Lists” from the user menu (top
@@ -139,6 +198,50 @@ const FileUploadForm = ({ buttonLabel }: { buttonLabel: string }) => {
                       </li>
                     </ol>
                   </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="premade_list_id"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>
+                    Don&apos;t have a list? Choose one of premade lists
+                  </FormLabel>
+                  <FormControl>
+                    <div className="flex gap-2 flex-wrap">
+                      <Select
+                        name={field.name}
+                        onValueChange={field.onChange}
+                        value={field.value}
+                      >
+                        <SelectTrigger className="w-[180px]">
+                          <SelectValue placeholder="Select a list" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {imdbListGroups.map((group) => {
+                            return (
+                              <SelectGroup key={group.name}>
+                                <SelectLabel>{group.name}</SelectLabel>
+                                {group.items.map((item) => {
+                                  return (
+                                    <SelectItem
+                                      key={group.name + "_" + item.id}
+                                      value={item.id}
+                                    >
+                                      {item.label}
+                                    </SelectItem>
+                                  );
+                                })}
+                              </SelectGroup>
+                            );
+                          })}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
